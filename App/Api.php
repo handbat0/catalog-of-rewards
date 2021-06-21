@@ -59,7 +59,6 @@ XML;
         $status = true;
         $response = self::sendRequest($url, $request);
         if ($response['Status'] == API::SUCCESS) {
-            \file_put_contents('test1.txt', print_r($response, true));
             require_once('./App/Model/Product.php');
             foreach ($response['Products']['Product'] as $value) {
                 if (is_array($value))
