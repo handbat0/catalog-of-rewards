@@ -10,11 +10,6 @@ class View
 
     public static function category(array $args = [])
     {
-        // $q = '?';
-        // foreach ($args as $key => $value) {
-        //     if ($key && $value) $q .= "$key=$value&";
-        // }
-        
         include("./App/Views/category.php");
     }
 }
