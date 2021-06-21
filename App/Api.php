@@ -3,6 +3,8 @@ namespace App;
 
 class API
 {
+    const SUCCESS = 2;
+
     static protected $server = "https://test.mgc-loyalty.ru/v1/";
     static protected $login = "openbroker";
     static protected $password = "yw4Tb8vK";
@@ -22,7 +24,7 @@ XML;
 
         $status = true;
         $response = self::sendRequest($url, $request);
-        if ($response['Status'] == 2) {
+        if ($response['Status'] == API::SUCCESS) {
             require_once('./App/Model/Category.php');
             foreach ($response['Categories']['Category'] as $value) {
                 Model\Category::create($value['@attributes']['id'], $value['@attributes']['parentId'] ?? 0, $value['name']);
@@ -56,7 +58,7 @@ XML;
 
         $status = true;
         $response = self::sendRequest($url, $request);
-        if ($response['Status'] == 2) {
+        if ($response['Status'] == API::SUCCESS) {
             \file_put_contents('test1.txt', print_r($response, true));
             require_once('./App/Model/Product.php');
             foreach ($response['Products']['Product'] as $value) {
