@@ -61,11 +61,11 @@ class Category
         $result = DB::query("SELECT * FROM categories");
         if (is_array($result) && count($result) > 0) {
             foreach ($result as $el) {
-                $collection[] = new Category($el[0], $el[1], $el[2]);
+                $collection[] = get_object_vars(new Category($el[0], $el[1], $el[2]));
             }
         }
 
-        return $collection;
+        echo json_encode($collection, JSON_PRETTY_PRINT);
     }
 
     public function save()
