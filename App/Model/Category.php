@@ -47,7 +47,7 @@ class Category
 
     public function getName()
     {
-        return $this->id;
+        return $this->name;
     }
     
     public function setName(string $name)
@@ -55,17 +55,56 @@ class Category
         return $this->name = $name;
     }
 
-    public static function getAll()
+    public static function getAll($forApi = true)
     {
         $collection = [];
         $result = DB::query("SELECT * FROM categories");
         if (is_array($result) && count($result) > 0) {
             foreach ($result as $el) {
-                $collection[] = get_object_vars(new Category($el[0], $el[1], $el[2]));
+                $tmp = new Category($el[0], $el[1], $el[2]);
+                $collection[] = $forApi ? get_object_vars($tmp) : $tmp;
             }
         }
 
-        echo json_encode($collection, JSON_PRETTY_PRINT);
+        if ($forApi) {
+            echo json_encode($collection, JSON_PRETTY_PRINT);
+        } else {
+            return $collection;
+        }
+    }
+
+    public static function getByParentId($parent = 0, $forApi = true)
+    {
+        $collection = [];
+        $result = DB::query("SELECT * FROM categories WHERE parent=" . $parent);
+        if (is_array($result) && count($result) > 0) {
+            foreach ($result as $el) {
+                $tmp = new Category($el[0], $el[1], $el[2]);
+                $collection[] = $forApi ? get_object_vars($tmp) : $tmp;
+            }
+        }
+
+        if ($forApi) {
+            echo json_encode($collection, JSON_PRETTY_PRINT);
+        } else {
+            return $collection;
+        }
+    }
+
+    public static function getById($id, $forApi = true)
+    {
+        $el = null;
+        $result = DB::query("SELECT * FROM categories WHERE id=" . $id);
+        if (is_array($result) && count($result) > 0) {
+            $tmp = new Category($result[0][0], $result[0][1], $result[0][2]);
+            $el = $forApi ? get_object_vars($tmp) : $tmp;
+        }
+
+        if ($forApi) {
+            echo json_encode($el, JSON_PRETTY_PRINT);
+        } else {
+            return $el;
+        }
     }
 
     public function save()

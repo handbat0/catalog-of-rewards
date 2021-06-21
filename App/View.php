@@ -3,8 +3,18 @@ namespace App;
 
 class View
 {
-    public static function main(array $args = [])
+    public static function main()
     {
-        echo \file_get_contents('./App/Views/main.php');
-    } 
+        include("./App/Views/main.php");
+    }
+
+    public static function category(array $args = [])
+    {
+        // $q = '?';
+        // foreach ($args as $key => $value) {
+        //     if ($key && $value) $q .= "$key=$value&";
+        // }
+        
+        include("./App/Views/category.php");
+    }
 }
