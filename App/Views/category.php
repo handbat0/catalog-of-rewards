@@ -2,7 +2,6 @@
     $categories = App\Model\Category::getByParentId($args['id'], false);
     $current = App\Model\Category::getById($args['id'], false);
     $parent = $current->getParentId() > 0 ? App\Model\Category::getById($current->getParentId(), false) : null;
-    var_dump($args);
 ?>
 
 <!DOCTYPE html>
