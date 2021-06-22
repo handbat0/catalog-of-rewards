@@ -1,9 +1,3 @@
-<?php
-    $categories = App\Model\Category::getByParentId($args['id'], false);
-    $current = App\Model\Category::getById($args['id'], false);
-    $parent = $current->getParentId() > 0 ? App\Model\Category::getById($current->getParentId(), false) : null;
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -61,17 +55,7 @@
     <div class="sidenav">
         <a href="/">Main page</a>
         <?php
-            if ($parent) {
-                echo "<a href='/category/" . $parent->getId() . "'  class='my-3'>Back - " . $parent->getName() . "</a>";
-            }
-
-            if ($current) {
-                echo "<a href='/category/" . $current->getId() . "'  class='my-3 fs-3 text-warning'>" . $current->getName() . "</a>";
-            }
-
-            foreach ($categories as $el) {
-                echo "<a href='/category/" . $el->getId() . "'>" . $el->getName() . "</a>";
-            }
+            echo $links;
         ?>
     </div>
 
