@@ -1,13 +1,16 @@
 <?php
 namespace App;
 
+require_once('./App/DB.php');
 require_once('./App/Api.php');
 require_once('./App/View.php');
 require_once('./App/Model/Category.php');
+require_once('./App/Model/Product.php');
 
 use App\API; 
 use App\View; 
 use App\Model\Category; 
+use App\Model\Product; 
 
 class Router
 {
@@ -55,6 +58,11 @@ class Router
             $this->args['id'] = str_replace('/category/', '', $route);
             $route = '/category/{id}';
         }
+
+        if (\strpos($route, '/product/') !== false) {
+            $this->args['id'] = str_replace('/product/', '', $route);
+            $route = '/product/{id}';
+        }
      
         if ($this->method == 'GET' && 
         array_key_exists($route, $this->get)) 
@@ -69,9 +77,10 @@ class Router
 
 $router = new Router;
 
-$router->get('/', [View::class, 'main']);
+$router->get('/', [View::class, 'category']);
 $router->get('/category/{id}', [View::class, 'category']);
-$router->post('/test', [Category::class, 'getAll']);
+$router->get('/product/{id}', [View::class, 'detail']);
+$router->post('/product/{id}', [Product::class, 'getById']);
 
 // get data from API
 $router->get('/api/getAllCategories', [API::class, 'getCategories']);

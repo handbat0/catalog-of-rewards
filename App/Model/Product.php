@@ -1,7 +1,6 @@
 <?php
 namespace App\Model;
 
-require_once('./App/DB.php');
 use App\DB;
 
 class Product
@@ -28,7 +27,7 @@ class Product
 
     static private $product;
 
-    private $fields = [
+    public static $fields = [
         'id',
         'name',
         'vendor',
@@ -50,7 +49,7 @@ class Product
         'termsOfUse',
     ];
 
-    public $required = [
+    public static $required = [
         'id',
         'name',
         'dealerID',
@@ -63,7 +62,7 @@ class Product
 
     public function __construct(array $fields)
     {
-        $req = $this->required;
+        $req = self::$required;
         foreach ($fields as $field => $val) {
             $f = lcfirst($field);
             $this->setField(lcfirst($f), $val);
@@ -103,7 +102,7 @@ class Product
 
     public function getName()
     {
-        return $this->id;
+        return $this->name;
     }
     
     public function setName(string $name)
@@ -289,26 +288,59 @@ class Product
             foreach ($result as $el) {
                 $data = [];
                 foreach (self::$fields as $k => $field) {
-                    $data['$field'] = $el[$k];
+                    $data[$field] = $el[$k];
                 }
-                $collection[] = new Category($data);
+                $collection[] = new Product($data);
             }
         }
 
         return $collection;
     }
 
-    public static function getByCategory($category)
+    public static function getById($id, $forApi = true)
     {
-        $collection = [];
-        $result = DB::query("SELECT * FROM products WHERE category='" . $category . "'");
+        if (\is_array($id) && array_key_exists('id', $id)) $id = $id['id'];
+        $product = null;
+        $result = DB::query("SELECT * FROM products WHERE id=" . $id);
         if (is_array($result) && count($result) > 0) {
             foreach ($result as $el) {
                 $data = [];
                 foreach (self::$fields as $k => $field) {
-                    $data['$field'] = $el[$k];
+                    $data[$field] = $el[$k];
                 }
-                $collection[] = new Category($data);
+                $tmp = new Product($data);
+                $product = $forApi ? get_object_vars($tmp) : $tmp;
+            }
+        }
+
+        if ($forApi) {
+            header('Content-Type: application/json');
+            echo json_encode($product, JSON_PRETTY_PRINT);
+        } else {
+            return $product;
+        }
+    }
+
+    public static function getAllByCategory($category, $forApi = true)
+    {
+        $collection = [];
+        if (\is_numeric($category)) {
+            if ($category > 0) {
+                $category = Category::getById($category, false);
+                $category = $category->getName();
+            } else {
+                $category = '';
+            }
+        }
+        $where = $category ? "WHERE category='$category'" : "";
+        $result = DB::query("SELECT * FROM products $where ORDER BY id DESC LIMIT 20");
+        if (is_array($result) && count($result) > 0) {
+            foreach ($result as $el) {
+                $data = [];
+                foreach (self::$fields as $k => $field) {
+                    $data[$field] = $el[$k];
+                }
+                $collection[] = new Product($data);
             }
         }
 
@@ -319,7 +351,7 @@ class Product
     {
         $result = DB::query("SELECT * FROM products WHERE id=" . $this->id);
         if (is_array($result) && count($result) > 0) {
-            $q = 'UPDATE categories SET';
+            $q = 'UPDATE products SET';
             $q .= " name='" . $this->name . "'";
             $q .= ", vendor='" . $this->vendor . "'";
             $q .= ", model='" . $this->model . "'";
@@ -341,7 +373,7 @@ class Product
             $q .= ' WHERE id=' . $this->id;
         } else {
             $values = [];
-            foreach ($this->fields as $field) {
+            foreach (self::$fields as $field) {
                 switch ($field) {
                     case 'price':
                     case 'discountPrice':
@@ -363,7 +395,7 @@ class Product
                 }
             }
 
-            $q = "INSERT INTO products (" . \implode(', ', $this->fields) . ")";
+            $q = "INSERT INTO products (" . \implode(', ', self::$fields) . ")";
             $q .= " VALUES (" . \implode(', ', $values) . ")";
         }
 

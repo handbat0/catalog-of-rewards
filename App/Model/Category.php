@@ -1,7 +1,6 @@
 <?php
 namespace App\Model;
 
-require_once('./App/DB.php');
 use App\DB;
 
 class Category

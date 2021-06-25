@@ -25,7 +25,6 @@ XML;
         $status = true;
         $response = self::sendRequest($url, $request);
         if ($response['Status'] == API::SUCCESS) {
-            require_once('./App/Model/Category.php');
             foreach ($response['Categories']['Category'] as $value) {
                 Model\Category::create($value['@attributes']['id'], $value['@attributes']['parentId'] ?? 0, $value['name']);
             }
@@ -59,7 +58,6 @@ XML;
         $status = true;
         $response = self::sendRequest($url, $request);
         if ($response['Status'] == API::SUCCESS) {
-            require_once('./App/Model/Product.php');
             foreach ($response['Products']['Product'] as $value) {
                 if (is_array($value))
                     Model\Product::create($value);
@@ -73,8 +71,7 @@ XML;
 
     public static function getProducts()
     {
-        require_once('./App/Model/Category.php');
-        $categories = Model\Category::getAll();
+        $categories = Model\Category::getAll(false);
 
         foreach ($categories as $category) {
             self::getProductsByCategory($category->getId());

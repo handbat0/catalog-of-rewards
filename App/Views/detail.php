@@ -57,17 +57,9 @@
 </head>
 
 <body>
-
-    <div class="sidenav">
-        <a href="/">Main page</a>
-        <?php
-            echo $links;
-        ?>
-    </div>
-
     <div class="main">
         <?php
-            echo $products ?? '';
+            echo $product ?? '';
         ?>
     </div>
 </div>
